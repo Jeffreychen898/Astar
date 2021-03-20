@@ -2,13 +2,18 @@ import java.util.*;
 
 final int BLOCK_SIZE = 100;
 
-boolean movement[] = {false, false, false, false};
+Player player;
+Node followPath;
 void setup() {
   fullScreen();
+  player = new Player(BLOCK_SIZE / 2, BLOCK_SIZE / 2);
+  followPath = null;
 }
 void draw() {
   background(0);
+  player.update();
   renderMap();
+  player.render();
 }
 void renderMap() {
   noStroke();
@@ -22,9 +27,12 @@ void renderMap() {
   }
   int mouseXIndex = int(mouseX / BLOCK_SIZE);
   int mouseYIndex = int(mouseY / BLOCK_SIZE);
-  IntPair start = new IntPair(0, 0);
+  int playerXIndex = int(player.position.x / BLOCK_SIZE);
+  int playerYIndex = int(player.position.y / BLOCK_SIZE);
+  IntPair start = new IntPair(playerXIndex, playerYIndex);
   IntPair stop = new IntPair(mouseXIndex, mouseYIndex);
   Node path = Astar(start, stop);
+  followPath = path;
 
   Node current = path;
   while (current != null) {
@@ -51,5 +59,6 @@ void mousePressed() {
     }
   }
   if (mouseButton == 37) {//left
+    player.follow(followPath);
   }
 }
